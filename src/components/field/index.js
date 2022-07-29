@@ -29,6 +29,12 @@ function errorStateFromProps(props, state) {
   return !!error
 }
 
+function errorStateFromProps(props, state) {
+  let { error } = props
+
+  return !!error
+}
+
 export default class TextField extends PureComponent {
   static defaultProps = {
     underlineColorAndroid: 'transparent',
@@ -141,8 +147,8 @@ export default class TextField extends PureComponent {
       newState.error = error
     }
 
-    if (value !== state.text) {
-      newState.text = value
+    if (value !== undefined && value !== state.value) {
+      newState.value = value
     }
 
     return newState
@@ -162,13 +168,13 @@ export default class TextField extends PureComponent {
     this.createGetter('contentInset')
     this.createGetter('labelOffset')
 
-    this.inputRef = React.createRef()
+    this.inputRef = this.props.inputRef ?? React.createRef()
     this.mounted = false
     this.focused = false
 
-    let { value: text, error, fontSize } = this.props
+    let { value, error, fontSize } = this.props
 
-    let labelState = labelStateFromProps(this.props, { text }) ? 1 : 0
+    let labelState = labelStateFromProps(this.props, { value }) ? 1 : 0
     let focusState = errorStateFromProps(this.props) ? -1 : 0
 
     this.state = {
@@ -311,10 +317,9 @@ export default class TextField extends PureComponent {
   }
 
   value() {
-    let { text } = this.state
-    let { defaultValue } = this.props
+    const { defaultValue } = this.props
 
-    let value = this.isDefaultVisible() ? defaultValue : text
+    const value = this.isDefaultVisible() ? defaultValue : this.state.value
 
     if (value == null) {
       return ''
@@ -323,8 +328,8 @@ export default class TextField extends PureComponent {
     return typeof value === 'string' ? value : String(value)
   }
 
-  setValue(text) {
-    this.setState({ text })
+  setValue(value) {
+    this.setState({ value })
   }
 
   isFocused() {
@@ -345,10 +350,10 @@ export default class TextField extends PureComponent {
   }
 
   isDefaultVisible() {
-    let { text, receivedFocus } = this.state
+    let { value, receivedFocus } = this.state
     let { defaultValue } = this.props
 
-    return !receivedFocus && text == null && defaultValue != null
+    return !receivedFocus && value == null && defaultValue != null
   }
 
   isPlaceholderVisible() {
@@ -379,7 +384,7 @@ export default class TextField extends PureComponent {
     this.startLabelAnimation()
 
     if (!receivedFocus) {
-      this.setState({ receivedFocus: true, text: this.value() })
+      this.setState({ receivedFocus: true, value: this.value() })
     }
   }
 
@@ -419,7 +424,7 @@ export default class TextField extends PureComponent {
       text = formatText(text)
     }
 
-    this.setState({ text })
+    this.setState({ value: text })
 
     if (hasMask) {
       this.setState ({ extractedText: extracted });
@@ -689,7 +694,7 @@ export default class TextField extends PureComponent {
       style: containerStyle,
       onStartShouldSetResponder: () => true,
       onResponderRelease: this.onPress,
-      pointerEvents: !disabled && editable ? 'auto' : 'none',
+      pointerEvents: !disabled ? 'auto' : 'none',
     }
 
     let inputContainerProps = {
@@ -729,20 +734,16 @@ export default class TextField extends PureComponent {
         <Animated.View {...inputContainerProps}>
           {this.renderLine(lineProps)}
           {this.renderAccessory('renderLeftAccessory')}
-
-          <View style={styles.stack}>
+          <View style={styles.stack} pointerEvents={editable ? 'auto' : 'none'}>
             {this.renderLabel(styleProps)}
-
             <View style={styles.row}>
               {this.renderAffix('prefix')}
               {this.renderInput()}
               {this.renderAffix('suffix')}
             </View>
           </View>
-
           {this.renderAccessory('renderRightAccessory')}
         </Animated.View>
-
         {this.renderHelper()}
       </View>
     )
