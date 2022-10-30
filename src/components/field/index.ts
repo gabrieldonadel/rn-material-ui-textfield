@@ -11,7 +11,7 @@ import Line from '../line';
 import Label from '../label';
 import Affix from '../affix';
 import Helper from '../helper';
-import Counter from '../counter';
+import Counter from '../counter/index.ts';
 
 import styles from './styles';
 
@@ -597,6 +597,7 @@ export default class TextField extends PureComponent {
     } = this.props;
 
     let props = this.inputProps();
+    console.log('props', props);
     let inputStyle = this.inputStyle();
 
     return (

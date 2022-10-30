@@ -2,7 +2,7 @@ import 'react-native';
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import Counter from '.';
+import Counter from './index';
 
 /* eslint-env jest */
 
