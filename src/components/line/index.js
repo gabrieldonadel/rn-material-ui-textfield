@@ -67,25 +67,25 @@ export default class Line extends PureComponent {
 
     if (disabled) {
       return {
-        borderColor: baseColor,
-        borderWidth: disabledLineWidth,
+        borderBottomColor: baseColor,
+        borderBottomWidth: disabledLineWidth,
       };
     }
 
     if (restricted) {
       return {
-        borderColor: errorColor,
-        borderWidth: activeLineWidth,
+        borderBottomColor: errorColor,
+        borderBottomWidth: activeLineWidth,
       };
     }
 
     return {
-      borderColor: focusAnimation.interpolate({
+      borderBottomColor: focusAnimation.interpolate({
         inputRange: [-1, 0, 1],
         outputRange: [errorColor, baseColor, tintColor],
       }),
 
-      borderWidth: focusAnimation.interpolate({
+      borderBottomWidth: focusAnimation.interpolate({
         inputRange: [-1, 0, 1],
         outputRange: [activeLineWidth, lineWidth, activeLineWidth],
       }),
