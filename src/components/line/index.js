@@ -63,7 +63,39 @@ export default class Line extends PureComponent {
       tintColor,
       errorColor,
       focusAnimation,
+      disabledLineType,
+      lineType
     } = this.props;
+
+    let borderStyle = disabled ? disabledLineType : lineType;
+
+    if (borderStyle === 'solid') {
+      if (disabled) {
+        return {
+          borderBottomColor: baseColor,
+          borderBottomWidth: disabledLineWidth,
+        };
+      }
+
+      if (restricted) {
+        return {
+          borderBottomColor: errorColor,
+          borderBottomWidth: activeLineWidth,
+        };
+      }
+
+      return {
+        borderBottomColor: focusAnimation.interpolate({
+          inputRange: [-1, 0, 1],
+          outputRange: [errorColor, baseColor, tintColor],
+        }),
+
+        borderBottomWidth: focusAnimation.interpolate({
+          inputRange: [-1, 0, 1],
+          outputRange: [activeLineWidth, lineWidth, activeLineWidth],
+        }),
+      };
+    }
 
     if (disabled) {
       return {
